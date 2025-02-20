@@ -34,21 +34,24 @@ API Calls
 
 */
 
-const fetchWeather = async (cityName: string) => {
+const fetchWeather = async (city: string) => {
   const response = await fetch('/api/weather/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ cityName }),
+    body: JSON.stringify({ city }),
   });
 
   const weatherData = await response.json();
+  const currentTime = new Date().toLocaleString();
 
   console.log('weatherData: ', weatherData);
 
-  renderCurrentWeather(weatherData[0]);
-  renderForecast(weatherData.slice(1));
+  // Render today's weather separately
+  renderCurrentWeather(weatherData[0], city, currentTime);
+  // Render the 5-day forecast
+  renderForecast(weatherData.slice(1, 6));
 };
 
 const fetchSearchHistory = async () => {
@@ -58,7 +61,7 @@ const fetchSearchHistory = async () => {
       'Content-Type': 'application/json',
     },
   });
-  return history;
+  return history.json();
 };
 
 const deleteCityFromHistory = async (id: string) => {
@@ -76,22 +79,23 @@ Render Functions
 
 */
 
-const renderCurrentWeather = (currentWeather: any): void => {
-  const { city, date, icon, iconDescription, tempF, windSpeed, humidity } =
-    currentWeather;
+const renderCurrentWeather = (currentWeather: any, city: string, time: string): void => {
+  const { date, icon, description, temperature, wind, humidity } = currentWeather;
 
-  // convert the following to typescript
-  heading.textContent = `${city} (${date})`;
+  // Extract only the date part
+  const dateOnly = date.split(' ')[0];
+
+  heading.textContent = `Weather in ${city} today (${dateOnly})`;
   weatherIcon.setAttribute(
     'src',
     `https://openweathermap.org/img/w/${icon}.png`
   );
-  weatherIcon.setAttribute('alt', iconDescription);
+  weatherIcon.setAttribute('alt', description);
   weatherIcon.setAttribute('class', 'weather-img');
   heading.append(weatherIcon);
-  tempEl.textContent = `Temp: ${tempF}°F`;
-  windEl.textContent = `Wind: ${windSpeed} MPH`;
-  humidityEl.textContent = `Humidity: ${humidity} %`;
+  tempEl.textContent = `Temp: ${temperature}°C`;
+  windEl.textContent = `Wind: ${wind} m/s`;
+  humidityEl.textContent = `Humidity: ${humidity}%`;
 
   if (todayContainer) {
     todayContainer.innerHTML = '';
@@ -118,7 +122,7 @@ const renderForecast = (forecast: any): void => {
 };
 
 const renderForecastCard = (forecast: any) => {
-  const { date, icon, iconDescription, tempF, windSpeed, humidity } = forecast;
+  const { date, icon, description, temperature, wind, humidity } = forecast;
 
   const { col, cardTitle, weatherIcon, tempEl, windEl, humidityEl } =
     createForecastCard();
@@ -129,10 +133,10 @@ const renderForecastCard = (forecast: any) => {
     'src',
     `https://openweathermap.org/img/w/${icon}.png`
   );
-  weatherIcon.setAttribute('alt', iconDescription);
-  tempEl.textContent = `Temp: ${tempF} °F`;
-  windEl.textContent = `Wind: ${windSpeed} MPH`;
-  humidityEl.textContent = `Humidity: ${humidity} %`;
+  weatherIcon.setAttribute('alt', description);
+  tempEl.textContent = `Temp: ${temperature} °C`;
+  windEl.textContent = `Wind: ${wind} m/s`;
+  humidityEl.textContent = `Humidity: ${humidity}%`;
 
   if (forecastContainer) {
     forecastContainer.append(col);
@@ -140,7 +144,7 @@ const renderForecastCard = (forecast: any) => {
 };
 
 const renderSearchHistory = async (searchHistory: any) => {
-  const historyList = await searchHistory.json();
+  const historyList = await searchHistory;
 
   if (searchHistoryContainer) {
     searchHistoryContainer.innerHTML = '';

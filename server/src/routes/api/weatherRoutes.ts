@@ -8,6 +8,7 @@ const router = Router();
 router.post('/', async (req: Request, res: Response): Promise<Response> => {
   try {
     const { city } = req.body;
+    console.log('Received city:', city); // Add logging here
     if (!city) {
       return res.status(400).json({ error: 'City name is required' });
     }
@@ -20,6 +21,7 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
 
     return res.json(weather);
   } catch (error) {
+    console.error('Error retrieving weather data:', error); // Add logging here
     return res.status(500).json({ error: 'Failed to retrieve weather data' });
   }
 });
@@ -30,6 +32,7 @@ router.get('/history', async (_req: Request, res: Response): Promise<Response> =
     const cities = await HistoryService.getCities();
     return res.json(cities);
   } catch (error) {
+    console.error('Error retrieving search history:', error); // Add logging here
     return res.status(500).json({ error: 'Failed to retrieve search history' });
   }
 });
@@ -41,6 +44,7 @@ router.delete('/history/:id', async (req: Request, res: Response): Promise<Respo
     await HistoryService.removeCity(id);
     return res.status(204).send();
   } catch (error) {
+    console.error('Error deleting city from search history:', error); // Add logging here
     return res.status(500).json({ error: 'Failed to delete city from search history' });
   }
 });
