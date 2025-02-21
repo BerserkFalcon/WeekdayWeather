@@ -85,7 +85,7 @@ const renderCurrentWeather = (currentWeather: any, city: string, time: string): 
   // Extract only the date part
   const dateOnly = date.split(' ')[0];
 
-  heading.textContent = `Weather in ${city} today (${dateOnly})`;
+  heading.textContent = `Weather in ${city} today (${dateOnly}) generated at ${time}`;
   weatherIcon.setAttribute(
     'src',
     `https://openweathermap.org/img/w/${icon}.png`
