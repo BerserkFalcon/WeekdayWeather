@@ -13,10 +13,8 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
       return res.status(400).json({ error: 'City name is required' });
     }
 
-    // GET weather data from city name
     const weather = await WeatherService.getWeatherForCity(city);
 
-    // Save city to search history
     await HistoryService.addCity(city);
 
     return res.json(weather);
@@ -26,7 +24,6 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
   }
 });
 
-// GET search history
 router.get('/history', async (_req: Request, res: Response): Promise<Response> => {
   try {
     const cities = await HistoryService.getCities();
@@ -37,7 +34,6 @@ router.get('/history', async (_req: Request, res: Response): Promise<Response> =
   }
 });
 
-// BONUS: DELETE city from search history
 router.delete('/history/:id', async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
