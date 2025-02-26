@@ -16,7 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve static files of entire client dist folder
-app.use(express.static(path.join(__dirname, '../../client')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // Implement middleware for parsing JSON and urlencoded form data
 app.use(express.json());
